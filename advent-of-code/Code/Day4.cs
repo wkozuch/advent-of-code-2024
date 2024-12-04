@@ -11,35 +11,20 @@ namespace AdventOfCode
     {
       var lines = File.ReadAllLines(@"Datasets\Day4.txt");
       var surface = lines.Select(x => x.Select(y => y).ToArray()).ToArray();
-      // jagged char[][] array with only '.'
       Part1(surface);
       Part2(surface);
     }
 
     private static void Part1(char[][] surface)
     {
-      var visited = Enumerable.Range(0, surface[0].Length)
-        .Select(x => new char[surface[x].Length].Select(c => '.').ToArray()).ToArray();
-
-      surface.Draw();
       var sum = 0;
-
       for (var r = 0; r < surface.Length; r++)
       {
         for (var c = 0; c < surface[r].Length; c++)
         {
-          var wordStart = surface[r][c];
-          var word = "XMAS";
-          if (wordStart != word.First()) continue;
-          visited[r][c] = 'X';
-          // check how many words come from this tile 
-          var oneTime = Enumerable.Range(0, surface[0].Length)
-            .Select(x => new char[surface[x].Length].Select(c => '.').ToArray()).ToArray();
-          oneTime[r][c] = 'X';
-          var wordCount = surface.IsNextOneEqualTo(r, c, word.Skip(1), oneTime);
+          if (surface[r][c] != 'X') continue;
+          var wordCount = surface.CountWordsStartingFrom(r, c);
           sum += wordCount;
-          Console.WriteLine($"Sum: {sum}, word count: {wordCount}");
-          Console.WriteLine();
         }
       }
 
@@ -48,27 +33,15 @@ namespace AdventOfCode
 
     private static void Part2(char[][] surface)
     {
-      var visited = Enumerable.Range(0, surface[0].Length)
-        .Select(x => new char[surface[x].Length].Select(c => '.').ToArray()).ToArray();
-
-      surface.Draw();
       var sum = 0;
 
       for (var r = 0; r < surface.Length; r++)
       {
         for (var c = 0; c < surface[r].Length; c++)
         {
-          var wordStart = surface[r][c];
-          if (wordStart != 'A') continue;
-          visited[r][c] = 'A';
-          // check how many words come from this tile 
-          var oneTime = Enumerable.Range(0, surface[0].Length)
-            .Select(x => new char[surface[x].Length].Select(c => '.').ToArray()).ToArray();
-          oneTime[r][c] = 'A';
-          var wordCount = surface.IsNextOneEqualTo(r, c, word.Skip(1), oneTime);
-          sum += wordCount;
-          Console.WriteLine($"Sum: {sum}, word count: {wordCount}");
-          Console.WriteLine();
+          if (surface[r][c] != 'A') continue;
+          var isX = surface.CheckDiagonals(r, c);
+          sum = isX ? sum + 1 : sum;
         }
       }
 
@@ -78,102 +51,59 @@ namespace AdventOfCode
 
   public static class CharArrayExtensions
   {
-    public static int IsNextOneEqualTo(this char[][] surface, int r, int c, IEnumerable<char> ch, char[][] visited)
+    public static int CountWordsStartingFrom(this char[][] surface, int r, int c)
     {
-      if (!ch.Any())
-      {
-        //  visited.Draw();
-        return 1;
-      }
+      var ch = "MAS";
+      var count = surface.IsWordInDirection(r, c, -1, 0, ch); //Left
+      count += surface.IsWordInDirection(r, c, 1, 0, ch); //Right 
+      count += surface.IsWordInDirection(r, c, 0, 1, ch); //Down
+      count += surface.IsWordInDirection(r, c, 0, -1, ch); //Up
 
-      var count = surface.IsWordInDirection(r, c, -1, 0, ch, visited);
-      count += surface.IsWordInDirection(r, c, 1, 0, ch, visited);
-      count += surface.IsWordInDirection(r, c, 0, 1, ch, visited);
-      count += surface.IsWordInDirection(r, c, 0, -1, ch, visited);
-
-      count += surface.IsWordInDirection(r, c, 1, 1, ch, visited);
-      count += surface.IsWordInDirection(r, c, 1, -1, ch, visited);
-      count += surface.IsWordInDirection(r, c, -1, 1, ch, visited);
-      count += surface.IsWordInDirection(r, c, -1, -1, ch, visited);
-
-      //if (0 < r && surface[r - 1][c] == ch.First())
-      //{
-      //  visited[r - 1][c] = ch.First();
-      //  count += surface.IsNextOneEqualTo(r - 1, c, ch.Skip(1), 0, visited);
-      //}
-
-      //if (r + 1 < surface.Length && surface[r + 1][c] == ch.First())
-      //{
-      //  visited[r + 1][c] = ch.First();
-      //  count += surface.IsNextOneEqualTo(r + 1, c, ch.Skip(1), 0, visited);
-      //}
-
-      //if (0 < c && surface[r][c - 1] == ch.First())
-      //{
-      //  visited[r][c - 1] = ch.First();
-      //  count += surface.IsNextOneEqualTo(r, c - 1, ch.Skip(1), 0, visited);
-      //}
-
-      //if (c + 1 < surface[0].Length && surface[r][c + 1] == ch.First())
-      //{
-      //  visited[r][c + 1] = ch.First();
-      //  count += surface.IsNextOneEqualTo(r, c + 1, ch.Skip(1), 0, visited);
-      //}
-
-      //if (r + 1 < surface.Length && c + 1 < surface[0].Length && surface[r + 1][c + 1] == ch.First())
-      //{
-      //  visited[r + 1][c + 1] = ch.First();
-      //  count += surface.IsNextOneEqualTo(r + 1, c + 1, ch.Skip(1), 0, visited);
-      //}
-
-      //if (r + 1 < surface.Length && 0 < c && surface[r + 1][c - 1] == ch.First())
-      //{
-      //  visited[r + 1][c - 1] = ch.First();
-      //  count += surface.IsNextOneEqualTo(r + 1, c - 1, ch.Skip(1), 0, visited);
-      //}
-
-      //if (0 < r && c + 1 < surface[0].Length && surface[r - 1][c + 1] == ch.First())
-      //{
-      //  visited[r - 1][c + 1] = ch.First();
-      //  count += surface.IsNextOneEqualTo(r - 1, c + 1, ch.Skip(1), 0, visited);
-      //}
-
-      //if (0 < r && 0 < c && surface[r - 1][c - 1] == ch.First())
-      //{
-      //  visited[r - 1][c - 1] = ch.First();
-      //  count += surface.IsNextOneEqualTo(r - 1, c - 1, ch.Skip(1), 0, visited);
-      //}
-
+      count += surface.IsWordInDirection(r, c, 1, 1, ch); //NE
+      count += surface.IsWordInDirection(r, c, 1, -1, ch); //SE
+      count += surface.IsWordInDirection(r, c, -1, 1, ch); //NW
+      count += surface.IsWordInDirection(r, c, -1, -1, ch); //SW
       return count;
     }
 
-    public static int CheckDiagonals(this char[][] surface, int r, int c, IEnumerable<char> ch, char[][] visited)
+    public static bool CheckDiagonals(this char[][] surface, int r, int c)
     {
-      if (!ch.Any())
-      {
-        //  visited.Draw();
-        return 1;
-      }
+      var count = surface.IsWordInDirection(r, c, 1, 1, new[] { 'M' });
+      count += surface.IsWordInDirection(r, c, 1, -1, new[] { 'M' });
+      count += surface.IsWordInDirection(r, c, -1, 1, new[] { 'S' });
+      count += surface.IsWordInDirection(r, c, -1, -1, new[] { 'S' });
+      if (count == 4) return true;
 
-      var count = surface.IsWordInDirection(r, c, 1, 1, 'M', visited);
-      count += surface.IsWordInDirection(r, c, 1, -1, ch, visited);
-      count += surface.IsWordInDirection(r, c, -1, 1, ch, visited);
-      count += surface.IsWordInDirection(r, c, -1, -1, ch, visited);
-      
-      return count;
+      count = surface.IsWordInDirection(r, c, 1, 1, new[] { 'S' });
+      count += surface.IsWordInDirection(r, c, 1, -1, new[] { 'S' });
+      count += surface.IsWordInDirection(r, c, -1, 1, new[] { 'M' });
+      count += surface.IsWordInDirection(r, c, -1, -1, new[] { 'M' });
+      if (count == 4) return true;
+
+      count = surface.IsWordInDirection(r, c, 1, 1, new[] { 'M' });
+      count += surface.IsWordInDirection(r, c, 1, -1, new[] { 'S' });
+      count += surface.IsWordInDirection(r, c, -1, 1, new[] { 'M' });
+      count += surface.IsWordInDirection(r, c, -1, -1, new[] { 'S' });
+      if (count == 4) return true;
+
+      count = surface.IsWordInDirection(r, c, 1, 1, new[] { 'S' });
+      count += surface.IsWordInDirection(r, c, 1, -1, new[] { 'M' });
+      count += surface.IsWordInDirection(r, c, -1, 1, new[] { 'S' });
+      count += surface.IsWordInDirection(r, c, -1, -1, new[] { 'M' });
+      if (count == 4) return true;
+
+      return false;
     }
 
 
-    public static int IsWordInDirection(this char[][] surface, int r, int c, int deltaR, int deltaC, IEnumerable<char> ch, char[][] visited)
+    public static int IsWordInDirection(this char[][] surface, int r, int c, int deltaR, int deltaC, IEnumerable<char> ch)
     {
       if (!ch.Any()) return 1;
 
       if (0 <= r + deltaR && r + deltaR < surface.Length && 0 <= c + deltaC && c + deltaC < surface[0].Length &&
           surface[r + deltaR][c + deltaC] == ch.First())
       {
-        visited[r + deltaR][c + deltaC] = ch.First();
-        //  visited.Draw();
-        return surface.IsWordInDirection(r + deltaR, c + deltaC, deltaR, deltaC, ch.Skip(1), visited);
+        return surface.IsWordInDirection(r + deltaR, c + deltaC, deltaR, deltaC, ch.Skip(1));
       }
 
       return 0;

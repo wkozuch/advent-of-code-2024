@@ -8,8 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Update="Datasets\*.*">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Update="Datasets\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
