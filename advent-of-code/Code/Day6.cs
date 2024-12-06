@@ -92,7 +92,6 @@ class Day6
       if (surface[current.Row + 1][current.Column] == '#') return current with { Char = '<' };
       return current with { Row = current.Row + 1 };
     }
-
     if (current.Char == '<')
     {
       if (current.Column - 1 < 0) return null;
