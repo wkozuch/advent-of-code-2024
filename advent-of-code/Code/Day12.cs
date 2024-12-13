@@ -33,29 +33,29 @@ class Day12
           visitedSurfaces[next.Row][next.Column] = next.Garden;
           garden.Area++;
           var nexts = GetNextPositions(next, surface);
-          garden.Perimeter += 4 - nexts.Count;
+          //garden.Perimeter += 4 - nexts.Count;
           nextNextPositions.AddRange(nexts);
 
-          //var fences = GetFences(next, surface);
-          //foreach (var f in fences)
-          //{
-          //  perimeter.Add(f);
+          var fences = GetFences(next, surface);
+          foreach (var f in fences)
+          {
+            perimeter.Add(f);
 
-          //  // if f row and column are withing the surface, update visitedSurfaces
-          //  if (f.Row >= 0 && f.Row < visitedSurfaces.Length && f.Column >= 0 && f.Column < visitedSurfaces[0].Length)
-          //  {
-          //    visitedSurfaces[f.Row][f.Column] = f.Garden;
-          //    // visitedSurfaces.Draw();
-          //  }
+            // if f row and column are withing the surface, update visitedSurfaces
+            if (f.Row >= 0 && f.Row < visitedSurfaces.Length && f.Column >= 0 && f.Column < visitedSurfaces[0].Length)
+            {
+              visitedSurfaces[f.Row][f.Column] = f.Garden;
+              // visitedSurfaces.Draw();
+            }
 
-          //  if (perimeter.Any(x => x.Row == f.Row && x.Column == f.Column - 1 && x.Garden == f.Garden)) continue;
-          //  if (perimeter.Any(x => x.Row == f.Row && x.Column == f.Column + 1 && x.Garden == f.Garden)) continue;
-          //  if (perimeter.Any(x => x.Column == f.Column && x.Row == f.Row - 1 && x.Garden == f.Garden)) continue;
-          //  if (perimeter.Any(x => x.Column == f.Column && x.Row == f.Row + 1 && x.Garden == f.Garden)) continue;
+            if (perimeter.Any(x => x.Row == f.Row && x.Column == f.Column - 1 && x.Garden == f.Garden)) continue;
+            if (perimeter.Any(x => x.Row == f.Row && x.Column == f.Column + 1 && x.Garden == f.Garden)) continue;
+            if (perimeter.Any(x => x.Column == f.Column && x.Row == f.Row - 1 && x.Garden == f.Garden)) continue;
+            if (perimeter.Any(x => x.Column == f.Column && x.Row == f.Row + 1 && x.Garden == f.Garden)) continue;
 
-          //  garden.Perimeter++;
-          //}
-          //    Console.WriteLine($"Garden{next.Garden}: [{next.Row},{next.Column}]={next.Garden}, Perimeter: {garden.Perimeter} Fences ({fences.Count}): {string.Join(", ", fences)}");
+            garden.Perimeter++;
+          }
+          //  Console.WriteLine($"Garden{next.Garden}: [{next.Row},{next.Column}]={next.Garden}, Perimeter: {garden.Perimeter} Fences ({fences.Count}): {string.Join(", ", fences)}");
         }
         nextPositions = nextNextPositions;
       }
