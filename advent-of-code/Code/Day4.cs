@@ -118,5 +118,14 @@ namespace AdventOfCode
 
       Console.WriteLine();
     }
+    public static void Draw(this int[][] surface)
+    {
+      foreach (var line in surface)
+      {
+        Console.WriteLine(string.Join("", line));
+      }
+
+      Console.WriteLine();
+    }
   }
 }
