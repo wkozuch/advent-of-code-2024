@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
-    <StartupObject>AdventOfCode.Day13</StartupObject>
+    <StartupObject>AdventOfCode.Day15</StartupObject>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
